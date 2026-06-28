@@ -1,10 +1,10 @@
 import { PHONEMES } from './phonemes.js';
 import { addScore, getRecentAverage, getSettings, saveSettings } from './store.js';
-import { assessPronunciation } from './azure.js';
+import { startPronunciationSession } from './azure.js';
 
 let sortMode = 'category'; // 'category' | 'score'
 let activeSymbol = null;
-let isRecording = false;
+let activeSession = null;
 
 const grid = document.getElementById('grid');
 const sortCategoryBtn = document.getElementById('sortCategoryBtn');
@@ -73,10 +73,14 @@ function openPractice(symbol) {
   `;
   document.getElementById('closePracticeBtn').addEventListener('click', closePractice);
   document.getElementById('playSampleBtn').addEventListener('click', () => playSample(p.word));
-  document.getElementById('recordBtn').addEventListener('click', () => recordAndAssess(p.word));
+  document.getElementById('recordBtn').addEventListener('click', () => toggleRecording(p.word));
 }
 
 function closePractice() {
+  if (activeSession) {
+    activeSession.stop();
+    activeSession = null;
+  }
   activeSymbol = null;
   practicePanel.classList.add('hidden');
   practicePanel.innerHTML = '';
@@ -88,37 +92,47 @@ function playSample(word) {
   speechSynthesis.speak(utter);
 }
 
-async function recordAndAssess(word) {
+function toggleRecording(word) {
   const settings = getSettings();
   if (!settings.key || !settings.region) {
     alert('先にAzureのAPIキーとリージョンを設定してください（右上の⚙️ボタン）');
     openSettings();
     return;
   }
-  if (isRecording) return;
-  isRecording = true;
 
   const recordBtn = document.getElementById('recordBtn');
   const resultArea = document.getElementById('resultArea');
-  recordBtn.disabled = true;
-  recordBtn.textContent = '🎙️ 録音中...';
-  resultArea.innerHTML = '';
 
-  try {
-    const { score, recognizedText } = await assessPronunciation(word, settings.key, settings.region);
-    addScore(activeSymbol, score);
-    resultArea.innerHTML = `
-      <div class="result-score ${scoreColor(score)}">${score}点</div>
-      <div class="result-text">認識結果: ${recognizedText}</div>
-    `;
-    renderGrid();
-  } catch (err) {
-    resultArea.innerHTML = `<div class="result-error">エラー: ${err.message}</div>`;
-  } finally {
-    isRecording = false;
-    recordBtn.disabled = false;
-    recordBtn.textContent = '🎙️ 発音する';
+  if (activeSession) {
+    // 録音中 → ユーザーの操作で発音終了を確定させる
+    recordBtn.disabled = true;
+    recordBtn.textContent = '🎙️ 判定中...';
+    activeSession.stop();
+    return;
   }
+
+  resultArea.innerHTML = '';
+  recordBtn.textContent = '⏹ ここまでで終了';
+
+  activeSession = startPronunciationSession(word, settings.key, settings.region, {
+    onResult: ({ score, recognizedText }) => {
+      activeSession = null;
+      addScore(activeSymbol, score);
+      resultArea.innerHTML = `
+        <div class="result-score ${scoreColor(score)}">${score}点</div>
+        <div class="result-text">認識結果: ${recognizedText}</div>
+      `;
+      renderGrid();
+      recordBtn.disabled = false;
+      recordBtn.textContent = '🎙️ 発音する';
+    },
+    onError: (err) => {
+      activeSession = null;
+      resultArea.innerHTML = `<div class="result-error">エラー: ${err.message}</div>`;
+      recordBtn.disabled = false;
+      recordBtn.textContent = '🎙️ 発音する';
+    },
+  });
 }
 
 function openSettings() {
