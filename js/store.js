@@ -27,6 +27,14 @@ export function getRecentAverage(symbol, n = 5) {
   return Math.round(sum / recent.length);
 }
 
+// 直近n回のスコア一覧を、新しい順で返す
+export function getRecentScores(symbol, n = 5) {
+  const data = loadScores();
+  const list = data[symbol];
+  if (!list || list.length === 0) return [];
+  return list.slice(-n).reverse();
+}
+
 export function getSettings() {
   try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; }
   catch { return {}; }

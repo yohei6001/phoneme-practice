@@ -102,6 +102,27 @@ header h1 { font-size: 22px; margin: 0; }
 .result-text { color: #666; margin-top: 4px; }
 .result-error { color: #d6432f; }
 
+.history-area { margin-top: 16px; border-top: 1px solid #eee; padding-top: 10px; }
+.history-label { font-size: 12px; color: #888; margin-bottom: 6px; }
+.history-list { display: flex; gap: 6px; flex-wrap: wrap; }
+.history-empty { font-size: 13px; color: #aaa; }
+.history-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+.history-chip.green { background: #2e9e4f; }
+.history-chip.yellow { background: #d6a418; }
+.history-chip.red { background: #d6432f; }
+.history-chip.gray { background: #aaa; }
+
 .modal {
   position: fixed;
   inset: 0;
