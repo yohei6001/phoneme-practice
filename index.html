@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>44音素の発音練習</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+</head>
+<body>
+  <header>
+    <h1>44音素の発音練習</h1>
+    <button id="settingsBtn" class="icon-btn" title="Azure設定">⚙️</button>
+  </header>
+
+  <div class="sort-toggle">
+    <button id="sortCategoryBtn" class="active">カテゴリ順</button>
+    <button id="sortScoreBtn">スコア順（苦手ランキング）</button>
+  </div>
+
+  <main id="grid" class="grid"></main>
+
+  <div id="practicePanel" class="practice-panel hidden"></div>
+
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Azure Speech Service 設定</h2>
+      <form id="settingsForm">
+        <label>APIキー
+          <input id="keyInput" type="text" autocomplete="off" required>
+        </label>
+        <label>リージョン（例: eastus）
+          <input id="regionInput" type="text" autocomplete="off" required>
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="settingsCloseBtn">閉じる</button>
+          <button type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
