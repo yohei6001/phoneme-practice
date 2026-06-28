@@ -124,12 +124,14 @@ function toggleRecording(word) {
   if (activeSession) {
     // 録音中 → ユーザーの操作で発音終了を確定させる
     recordBtn.disabled = true;
+    recordBtn.classList.remove('recording');
     recordBtn.textContent = '🎙️ 判定中...';
     activeSession.stop();
     return;
   }
 
   resultArea.innerHTML = '';
+  recordBtn.classList.add('recording');
   recordBtn.textContent = '⏹ ここまでで終了';
 
   activeSession = startPronunciationSession(word, settings.key, settings.region, {

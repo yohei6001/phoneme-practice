@@ -94,6 +94,15 @@ header h1 { font-size: 22px; margin: 0; }
   cursor: pointer;
 }
 .practice-actions button:disabled { opacity: 0.6; }
+.practice-actions button.recording {
+  background: #d6432f;
+  border-color: #d6432f;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
 .result-area { margin-top: 14px; text-align: center; }
 .result-score { font-size: 32px; font-weight: bold; }
 .result-score.green { color: #2e9e4f; }
