@@ -6,8 +6,8 @@ export async function assessPronunciation(word, key, region) {
   const speechConfig = window.SpeechSDK.SpeechConfig.fromSubscription(key, region);
   speechConfig.speechRecognitionLanguage = 'en-US';
   // 単語1つだけの発音なので、発話終了の判定を早める（デフォルトは長めの無音待ちでテンポが悪くなる）
-  speechConfig.setProperty(window.SpeechSDK.PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, '300');
-  speechConfig.setProperty(window.SpeechSDK.PropertyId.Speech_SegmentationSilenceTimeoutMs, '300');
+  speechConfig.setProperty(window.SpeechSDK.PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, '500');
+  speechConfig.setProperty(window.SpeechSDK.PropertyId.Speech_SegmentationSilenceTimeoutMs, '500');
   const audioConfig = window.SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
 
   const pronunciationConfig = new window.SpeechSDK.PronunciationAssessmentConfig(
